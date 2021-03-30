@@ -1,0 +1,42 @@
+target: windows
+toolchain: gcc
+
+# commands
+commands:
+  cc: gcc
+  cxx: g++
+  as: as
+  ar: ar
+  ld: g++
+
+# options
+options:
+  cc: !opts
+    - -std=gnu99
+    # Note: -D_WIN32_WINNT=0x0601 means headers for Windows 7, ie: Windows 7 is min SDK!
+    - -D_WIN32_WINNT=0x0603 
+    - !?x64 -m64 -Wa,-mbig-obj
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  cxx: !opts
+    - -std=c++11
+    - -D_WIN32_WINNT=0x0603
+    - !?x64 -m64 -Wa,-mbig-obj
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  ld: !opts
+    - -s -static
+    - !?x64 -m64
+
+# rules
+rules:
+  # compile
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  as: ${target.cmds.as} ${target.opts.as}  ${project.opts.as} -c ${project.source} -o ${project.source.obj}
+  # archive
+  ar: ${target.cmds.ar} q ${target.opts.ar} ${project.opts.ar} ${project.out.file} ${project.objs}
+  # link
+  ld: ${target.cmds.ld} ${target.opts.ld} ${project.opts.ld} -o ${project.out.file} ${project.objs} ${project.libs}

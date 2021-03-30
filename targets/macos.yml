@@ -1,0 +1,62 @@
+target: macos
+toolchain: gcc
+
+# commands
+commands:
+  cc: gcc
+  cxx: g++
+  as: as
+  #ar: ar
+  ar: libtool
+  ld: g++
+
+# options
+options:
+  cc: !opts
+    - -std=gnu99
+    - -target x86_64-apple-darwin
+    - -mmacosx-version-min=11.0
+    - -Wno-deprecated-declarations
+    - -Wno-tautological-pointer-compare
+    - -Wno-undefined-bool-conversion
+    - -Wno-int-to-void-pointer-cast
+    - -Wno-inconsistent-missing-override
+    - -Wno-logical-op-parentheses
+    - -Wno-parentheses-equality
+    - !?release -O3 -DNDEBUG=1 -ffunction-sections -fdata-sections
+
+  cxx: !opts
+    - -std=c++14
+    - -target x86_64-apple-darwin
+    - -mmacosx-version-min=11.0
+    - -Wno-deprecated-declarations
+    - -Wno-tautological-pointer-compare
+    - -Wno-undefined-bool-conversion
+    - -Wno-int-to-void-pointer-cast
+    - -Wno-inconsistent-missing-override
+    - -Wno-logical-op-parentheses
+    - -Wno-parentheses-equality
+    - !?release -O3 -DNDEBUG=1 -ffunction-sections -fdata-sections
+
+  ld: !opts
+    - -mmacosx-version-min=11.0
+    - -target x86_64-apple-darwin
+    - -Wl,-rpath,@executable_path
+    - -Wl,-rpath,@executable_path/../Frameworks
+    - -Wl,-F/Library/Frameworks
+    - !?release -O3 -Wl,-dead_strip -Wl,-S -Wl,-x
+
+  ar: !opts
+    - -no_warning_for_no_symbols
+
+# rules
+rules:
+  # compile
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj} 
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj} 
+  as: ${target.cmds.as} ${target.opts.as}  ${project.opts.as} -c ${project.source} -o ${project.source.obj} 
+  # archive
+  #ar: ${target.cmds.ar} q ${target.opts.ar} ${project.opts.ar} ${project.out.file} ${project.objects}
+  ar: ${target.cmds.ar} -static ${target.opts.ar} ${project.opts.ar} -o ${project.out.file} ${project.objs}
+  # link
+  ld: ${target.cmds.ld} ${target.opts.ld} ${project.opts.ld} -o ${project.out.file} ${project.objs} ${project.libs}
