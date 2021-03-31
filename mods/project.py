@@ -63,8 +63,10 @@ class Project:
         self.bin_files = []
         self.java_files= []
         self.asset_files = []
+        self.ninja_files = []
 
-        # flux project deps
+        # flux project
+        self.flux_file = ''
         self.flux_srcs = []
         self.flux_libs = []
 
@@ -93,6 +95,7 @@ class Project:
                 if os.path.isfile(file):
                     proj_file = file
                     self.data = util.load_flux_yaml(proj_file, build_opts)
+                    self.flux_file = proj_file
                     break
 
         elif os.path.isfile(proj_dir):
@@ -100,6 +103,7 @@ class Project:
             proj_file = proj_dir
             proj_dir = util.split_dir(proj_dir)
             self.data = util.load_flux_yaml(proj_file, build_opts)
+            self.flux_file = proj_file
         
         if not self.data:
             log.fatal('unable to find project file in `%s`' % proj_dir)

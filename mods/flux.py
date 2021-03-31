@@ -147,6 +147,12 @@ def run(flux_dir, proj_dir, args):
                                             log.info('generate `%s`' % dep.gen_file)
                                         with open(dep.gen_file, 'w') as out:
                                             dep.gen_ninja(out, opts, target)
+                                else:
+                                    #TODO: regenerate ninja if 'dep.flux_file' is most recent than 'dep.out_file'
+                                    pass
+
+                                # add 'dep.gen_file' to project
+                                proj.ninja_files.append(dep.gen_file)
 
                                 # build dep module
                                 if os.path.exists(dep.gen_file):
