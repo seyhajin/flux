@@ -17,20 +17,24 @@ commands:
 # options
 options:
   cc: !opts
-    - -EHs -W0 -MT -utf-8 -bigobj
+    - -nologo -EHs -W0 -MT -utf-8 -bigobj
     - !?debug -O1
     - !?release -O2 -DNDEBUG=1
 
   cxx: !opts
-    - -EHs -W0 -MT -utf-8 -bigobj
+    - -nologo -EHs -W0 -MT -utf-8 -bigobj
     - !?debug -O1
     - !?release -O2 -DNDEBUG=1
 
+  ar: !opts
+    - -nologo
+
   as: !opts
+    - -nologo
     - -DBOOST_CONTEXT_EXPORT=
 
 #  ld: !opts
-#    - user32.lib
+#    - -nologo
 
 # rules
 rules:
