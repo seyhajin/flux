@@ -74,15 +74,26 @@ def run(flux_dir, proj_dir, args):
             opts = BuildOpts()
             args = opts.parse_opts(proj_dir, args)
 
+            # get target datas
+            #TODO: add user custom targets 
+
+            # set target opts
+            target = Target(flux_dir, opts)
+            if target.toolchain == 'msvc':
+                # check msvc install
+                if target.find_msvc():
+                    # update env vars
+                    os.environ['PATH'] = os.environ['FLUX_MSVC_PATH']+';'+os.environ['PATH']
+                    os.environ['INCLUDE'] = os.environ['FLUX_MSVC_INCLUDE']
+                    os.environ['LIB'] = os.environ['FLUX_MSVC_LIB']
+                else:
+                    log.fatal('MSVC installation not found!')
+
             if opts.verbose >= 3:
                 log.info('python %s.%s.%s' % (sys.version_info[:3]))
                 log.info('os.environ:')
                 for ev in sorted(filter(lambda x: x.startswith('FLUX_'), os.environ)):
-                    log.text('%s: %s' % (ev, os.environ[ev]))
-
-            # get target datas
-            #TODO: add user custom targets 
-            target = Target(flux_dir, opts)
+                    log.info('- %s: %s' % (ev, log.YELLOW+os.environ[ev]+log.DEFAULT))
 
             # if not arg, set project in current dir
             if not len(args):
@@ -122,6 +133,7 @@ def run(flux_dir, proj_dir, args):
                 # depends
                 if proj.build in ['app']: # app only?
                     if len(proj.flux_libs):
+                        sys_libs = []
                         for lib in proj.flux_libs:
                             # load dep project file
                             dep_dir = os.path.join(util.get_workspace_dir(flux_dir), lib)
@@ -135,6 +147,10 @@ def run(flux_dir, proj_dir, args):
 
                                 # parse dep project file
                                 dep.parse_inputs()
+
+                                # files stamp
+                                out_file_stamp = None
+                                gen_file_stamp = None
 
                                 # check if module archive exists
                                 if not os.path.exists(dep.out_file):
@@ -168,15 +184,21 @@ def run(flux_dir, proj_dir, args):
                                 # add dep module archive
                                 proj.lib_files.append('"%s"' % dep.out_file)
 
-                                # add dep system libs
+                                # append system libs
                                 for lib in dep.lib_files:
-                                    if lib not in proj.lib_files:
-                                        proj.lib_files.append(lib)
+                                    if lib not in sys_libs:
+                                        sys_libs.append(lib)
 
                                 # return to main project
                                 os.chdir(cd)
+
+                        # add dep system libs at end
+                        for lib in sys_libs:
+                            if lib not in proj.lib_files:
+                                proj.lib_files.append(lib)
+                        
                 # set rules vars
-                rule_vars = target.get_rule_vars(proj)
+                #rule_vars = target.get_rule_vars(proj)
 
                 # generate ninja in proj.out_dir
                 if opts.verbose >= 1:

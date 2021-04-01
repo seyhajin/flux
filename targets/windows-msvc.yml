@@ -1,0 +1,44 @@
+target: windows
+toolchain: msvc
+msvc-version: [2019, 2017, 2015]
+msvc-prefix: 'Remarque: inclusion du fichier:' # FR
+#msvc-prefix: 'Note: including file:' # EN
+
+# commands
+commands:
+  cc: cl
+  cxx: cl
+  as: !concat
+    - !?x86 ml
+    - !?x64 ml64
+  ar: lib
+  ld: link
+
+# options
+options:
+  cc: !opts
+    - -EHs -W0 -MT -utf-8 -bigobj
+    - !?debug -O1
+    - !?release -O2 -DNDEBUG=1
+
+  cxx: !opts
+    - -EHs -W0 -MT -utf-8 -bigobj
+    - !?debug -O1
+    - !?release -O2 -DNDEBUG=1
+
+  as: !opts
+    - -DBOOST_CONTEXT_EXPORT=
+
+#  ld: !opts
+#    - user32.lib
+
+# rules
+rules:
+  # compile
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -showIncludes -c ${project.source} -Fo${project.source.obj}
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -showIncludes -c ${project.source} -Fo${project.source.obj}
+  as: ${target.cmds.as} ${target.opts.as} ${project.opts.as} -c ${project.source} -Fo${project.source.obj}
+  # archive
+  ar: ${target.cmds.ar} ${target.opts.ar} ${project.opts.ar} -out:${project.out.file} ${project.objs}
+  # link
+  ld: ${target.cmds.ld} ${target.opts.ld} ${project.opts.ld} -entry:mainCRTStartup -out:${project.out.file} ${project.objs} ${project.libs}

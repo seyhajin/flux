@@ -35,7 +35,7 @@ rules:
   # compile
   cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
   cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
-  as: ${target.cmds.as} ${target.opts.as}  ${project.opts.as} -c ${project.source} -o ${project.source.obj}
+  as: ${target.cmds.as} ${target.opts.as} ${project.opts.as} -c ${project.source} -o ${project.source.obj}
   # archive
   ar: ${target.cmds.ar} q ${target.opts.ar} ${project.opts.ar} ${project.out.file} ${project.objs}
   # link

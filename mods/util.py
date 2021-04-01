@@ -163,7 +163,7 @@ def load_flux_yaml(file, opts):
 
     def if_windows(loader, node):
         value = loader.construct_scalar(node)
-        return value if opts.target == 'windows' else ''
+        return value if (opts.target == 'windows' or opts.target == 'windows-msvc') else ''
     
     # configs
     def if_debug(loader, node):
@@ -195,6 +195,15 @@ def load_flux_yaml(file, opts):
         value = loader.construct_scalar(node)
         return value if opts.arch == 'wasm' else ''
 
+    # toolchains
+    def if_gcc(loader, node):
+        value = loader.construct_scalar(node)
+        return value if opts.toolchain == 'gcc' else ''
+
+    def if_msvc(loader, node):
+        value = loader.construct_scalar(node)
+        return value if opts.toolchain == 'msvc' else ''
+
     #---------------------------------------
     # register the tag handlers
     #---------------------------------------
@@ -223,6 +232,9 @@ def load_flux_yaml(file, opts):
     yaml.add_constructor('!?arm32', if_arm32)
     yaml.add_constructor('!?arm64', if_arm64)
     yaml.add_constructor('!?wasm', if_wasm)
+
+    yaml.add_constructor('!?gcc', if_gcc)
+    yaml.add_constructor('!?msvc', if_msvc)
 
     #---------------------------------------
     # Load yaml file and return yaml object

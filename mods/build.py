@@ -177,6 +177,8 @@ class BuildOpts:
             self.target = util.get_host_platform()
 
         self.toolchain = 'gcc'
+        if self.target == 'windows-msvc':
+            self.toolchain = 'msvc'
 
         if self.target in target.TARGET_DESKTOP:
             if self.apptype == '':

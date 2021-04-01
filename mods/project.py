@@ -268,6 +268,8 @@ class Project:
         n.newline()
         n.comment('ninja settings')
         n.variable('builddir', self.cache_dir)
+        if self.toolchain == 'msvc':
+            n.variable('msvc_deps_prefix', ninja.escape(target.msvc_prefix))
         n.newline()
         n.comment('target commands')
         n.variable('cc', target.cmds['cc'])
@@ -292,6 +294,11 @@ class Project:
 
         #TODO: add `subninja` for depends modules : used to include another .ninja file, introduces a new scope
         # `include` used to include another .ninja file in the current scope (use this only for global configurations)
+        #if len(self.ninja_files):
+        #    n.newline()
+        #    n.comment('project depends')
+        #    for dep in self.ninja_files:
+        #        n.subninja(dep)
 
         n.newline()
         n.comment('----------------------------')
@@ -304,7 +311,7 @@ class Project:
         n.rule('cc_compile',
             util.replace_env(target.rules['cc'], rules_remap),
             deps=target.toolchain if target.toolchain in ['gcc', 'msvc'] else 'gcc',
-            depfile=rules_remap['project.source.dep'],
+            depfile=rules_remap['project.source.dep'] if self.toolchain == 'gcc' else '',
             description='Compiling $in'
         )
         n.newline()
@@ -312,7 +319,7 @@ class Project:
         n.rule('cxx_compile',
             util.replace_env(target.rules['cxx'], rules_remap),
             deps=target.toolchain if target.toolchain in ['gcc', 'msvc'] else 'gcc',
-            depfile=rules_remap['project.source.dep'],
+            depfile=rules_remap['project.source.dep'] if self.toolchain == 'gcc' else '',
             description='Compiling $in'
         )
         n.newline()
@@ -364,11 +371,11 @@ class Project:
 
             # build statement
             if ext in ['.c', '.m']:
-                n.build(obj, 'cc_compile', src, variables={'dep_file': dep})
+                n.build(obj, 'cc_compile', src, variables={'dep_file': dep} if self.toolchain == 'gcc' else {})
             elif ext in ['.cc', '.cxx', '.cpp', '.c++', '.mm']:
-                n.build(obj, 'cxx_compile', src, variables={'dep_file': dep})
+                n.build(obj, 'cxx_compile', src, variables={'dep_file': dep} if self.toolchain == 'gcc' else {})
             elif ext in ['.asm', '.s']:
-                n.build(obj, 'as_compile', src, variables={'file_name': src})
+                n.build(obj, 'as_compile', src, variables={'dep_file': dep}  if self.toolchain == 'gcc' else {})
             
             # add obj to objects list
             objs.append(obj)
