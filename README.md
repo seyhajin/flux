@@ -258,7 +258,7 @@ Examples:
 #### Modules
 
 Flux project can use other Flux modules. Input type must be `system` and ends with `.flux` extension.
-A Flux module is a static library interconnectde between them. It is better to use them to save compilation time and have a clean workspace.
+A Flux module is a static library, interconnected between them. It is better to use them to save compilation time and have an orderly workspace.
 
 *NOTE: Input type is `system` from workspace directory*
 
