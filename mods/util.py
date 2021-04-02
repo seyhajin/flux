@@ -204,6 +204,10 @@ def load_flux_yaml(file, opts):
         value = loader.construct_scalar(node)
         return value if opts.toolchain == 'msvc' else ''
 
+    def if_mingw(loader, node):
+        value = loader.construct_scalar(node)
+        return value if (opts.target == 'windows' and opts.toolchain == 'gcc') else ''
+
     #---------------------------------------
     # register the tag handlers
     #---------------------------------------
@@ -235,6 +239,7 @@ def load_flux_yaml(file, opts):
 
     yaml.add_constructor('!?gcc', if_gcc)
     yaml.add_constructor('!?msvc', if_msvc)
+    yaml.add_constructor('!?mingw', if_mingw)
 
     #---------------------------------------
     # Load yaml file and return yaml object
