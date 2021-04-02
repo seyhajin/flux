@@ -33,14 +33,14 @@ options:
     - -nologo
     - -DBOOST_CONTEXT_EXPORT=
 
-#  ld: !opts
-#    - -nologo
+  ld: !opts
+    - -nologo
 
 # rules
 rules:
   # compile
-  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -showIncludes -c ${project.source} -Fo${project.source.obj}
-  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -showIncludes -c ${project.source} -Fo${project.source.obj}
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -c ${project.source} -Fo${project.source.obj}
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -c ${project.source} -Fo${project.source.obj}
   as: ${target.cmds.as} ${target.opts.as} ${project.opts.as} -c ${project.source} -Fo${project.source.obj}
   # archive
   ar: ${target.cmds.ar} ${target.opts.ar} ${project.opts.ar} -out:${project.out.file} ${project.objs}
