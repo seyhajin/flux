@@ -113,7 +113,7 @@ info: run `flux help` for more informations
 *TODO*
 
 ```cmd
-./flux build mods\hello samples\hello
+./flux build mods/hello samples/hello
 ```
 ---
 ## How to Flux works
