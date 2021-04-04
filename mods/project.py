@@ -269,7 +269,10 @@ class Project:
         n.comment('ninja settings')
         n.variable('builddir', self.cache_dir)
         if self.toolchain == 'msvc':
-            n.variable('msvc_deps_prefix', ninja.escape(target.msvc_prefix))
+            if util.python_version[0] >= 3:
+                n.variable('msvc_deps_prefix', target.msvc_prefix.encode('utf-8').decode('utf-8'))
+            else:
+                n.variable('msvc_deps_prefix', unicode(target.msvc_prefix))
         n.newline()
         n.comment('target commands')
         n.variable('cc', target.cmds['cc'])

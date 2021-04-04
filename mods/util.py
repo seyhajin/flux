@@ -13,6 +13,8 @@ host_platforms = {
     'Windows':  'windows',
 }
 
+python_version = sys.version_info[:3]
+
 #------------------------------------------------------------------------------ system
 def get_host_platform():
     pf = platform.system()
