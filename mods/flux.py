@@ -62,6 +62,8 @@ def run(flux_dir, proj_dir, args):
         
         # for development stuff only
         elif name == 'dev':
+            pass
+        elif name == 'build':
             #log.text('===== test console output begin =====')
             #log.trace('trace message')
             #log.debug('debug message')
