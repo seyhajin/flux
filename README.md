@@ -53,7 +53,13 @@ Flux will create additional directories on the same directory level as the Flux 
 > mkdir my-workspace
 > cd my-workspace
 > git clone https://github.com/seyhajin/flux.git
-> cd flux
+```
+
+You can find some of the Flux modules and examples by cloning these repositories in the **workspace** folder:
+
+```cmd
+> git clone https://github.com/seyhajin/flux-mods.git
+> git clone https://github.com/seyhajin/flux-samples.git
 ```
 
 ## Project directory structure
@@ -61,33 +67,30 @@ Flux will create additional directories on the same directory level as the Flux 
 Flux considers its parent folder to be its **workspace** directory, and it always refers to that folder to launch commands.
 
 ```
-┃
 ┗━━ 📁 <flux-workspace>/
     ┃
-    ┗━━ 📁 flux/
-    ┃   ┃
-    ┃   ┗━━ flux            # flux executable
-    ┃   ┃
+    ┣━━ 📁 flux/
+    ┃   ┣━━ flux            # flux executable
     ┃   ┗━━ ...
     ┃
-    ┗━━ 📁 project-1/
-    ┃   ┃    
-    ┃   ┣━━ flux.yml
-    ┃   ┃    
+    ┣━━ 📁 flux-mods/       # flux modules (optional)
+    ┃   ┗━━ ...
+    ┃
+    ┣━━ 📁 flux-samples/    # flux samples (optional)  
+    ┃   ┗━━ ...
+    ┃
+    ┣━━ 📁 project-1/   
+    ┃   ┣━━ flux.yml 
     ┃   ┗━━ ...
     ┃
     ┗━━ 📁 modules/
         ┃
-        ┗━━ 📁 core/
-        ┃   ┃
-        ┃   ┗━━ flux.yml
-        ┃   ┃    
+        ┣━━ 📁 core/
+        ┃   ┣━━ flux.yml   
         ┃   ┗━━ ...
         ┃
         ┗━━ 📁 sdl2/
-            ┃
-            ┗━━ flux.yml
-            ┃    
+            ┣━━ flux.yml 
             ┗━━ ...
 ```
 
@@ -113,14 +116,14 @@ info: run `flux help` for more informations
 *TODO*
 
 ```cmd
-./flux build mods/hello samples/hello
+./flux build flux-mods/hello flux-samples/hello
 ```
 ---
 ## How to Flux works
 
 Flux needs to know the build options to determine the target of one or more projects. It will generate for each project, a `flux-proj/<target-build-profile>` directory and a `build.ninja` file to be able to compile the project.
 
-[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbkFbQnVpbGRPcHRzXVxuQltUYXJnZXRPcHRzXVxuQ1tQcm9qZWN0T3B0c11cbkRbR2VuZXJhdGUgTmluamFdXG5FW0J1aWxkIE5pbmphXVxuQSAtLT4gQiAtLT4gQyAtLT4gRCAtLT4gRSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcbkFbQnVpbGRPcHRzXVxuQltUYXJnZXRPcHRzXVxuQ1tQcm9qZWN0T3B0c11cbkRbR2VuZXJhdGUgTmluamFdXG5FW0J1aWxkIE5pbmphXVxuQSAtLT4gQiAtLT4gQyAtLT4gRCAtLT4gRSIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
+[![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcbmxpbmtTdHlsZSBkZWZhdWx0IGludGVycG9sYXRlIGJhc2lzXG5jbGFzc0RlZiBkZWZhdWx0IGZpbGw6IzY5OWFkMCxzdHJva2U6IzRCNzE5OCxjb2xvcjp3aGl0ZTtcblxuQVtcImZsdXggYnVpbGQgW29wdHNdIFtwcm9qZWN0c11cIl1cbkIoXCJHZXQgT3B0aW9uc1wiKVxuQyhcIkdldCBUYXJnZXQgY29uZmlnc1wiKVxuRChcIkdldCBQcm9qZWN0IGNvbmZpZ3NcIilcbkYoXCJQYXJzZSBpbnB1dHNcIilcbkcoXCJHZW5lcmF0ZSBOaW5qYVwiKVxuSChcIkJ1aWxkIE5pbmphXCIpXG5JKFwiQ29weSBBc3NldHNcIilcbkooKFwiRW5kXCIpKVxuXG5BIC0tPiBCXG5CIC0tPiBDXG5DIC0tIEZvciBlYWNoIFByb2plY3QgLS0-IERcbkQgLS0-IEZcbkYgLS0gTW9kdWxlIGRlcHMgLS0-IEdcbkcgLS0-IEhcbkggLS0-IElcbkkgLS0-IERcbkkgLS0-IEoiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcbmxpbmtTdHlsZSBkZWZhdWx0IGludGVycG9sYXRlIGJhc2lzXG5jbGFzc0RlZiBkZWZhdWx0IGZpbGw6IzY5OWFkMCxzdHJva2U6IzRCNzE5OCxjb2xvcjp3aGl0ZTtcblxuQVtcImZsdXggYnVpbGQgW29wdHNdIFtwcm9qZWN0c11cIl1cbkIoXCJHZXQgT3B0aW9uc1wiKVxuQyhcIkdldCBUYXJnZXQgY29uZmlnc1wiKVxuRChcIkdldCBQcm9qZWN0IGNvbmZpZ3NcIilcbkYoXCJQYXJzZSBpbnB1dHNcIilcbkcoXCJHZW5lcmF0ZSBOaW5qYVwiKVxuSChcIkJ1aWxkIE5pbmphXCIpXG5JKFwiQ29weSBBc3NldHNcIilcbkooKFwiRW5kXCIpKVxuXG5BIC0tPiBCXG5CIC0tPiBDXG5DIC0tIEZvciBlYWNoIFByb2plY3QgLS0-IERcbkQgLS0-IEZcbkYgLS0gTW9kdWxlIGRlcHMgLS0-IEdcbkcgLS0-IEhcbkggLS0-IElcbkkgLS0-IERcbkkgLS0-IEoiLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9LCJ1cGRhdGVFZGl0b3IiOmZhbHNlfQ)
 
 ## Targets
 
@@ -264,14 +267,14 @@ A Flux module is a static library, interconnected between them. It is better to 
 
 Examples:
 ```yaml
-- <mods/sx/sx.flux>       # import 'sx' module into my project
-- <mods/sdl2/sdl2.flux>   # import 'sdl2' module into my project
+- <flux-mods/sx/sx.flux>       # import 'sx' module into my project
+- <flux-mods/sdl2/sdl2.flux>   # import 'sdl2' module into my project
 ```
 
 In project source, e.g. :
 ```c++
-#include <mods/sx/sx.h>
-#include <mods/sdl2/SDL/include/SDL.h>
+#include <flux-mods/sx/sx.h>
+#include <flux-mods/sdl2/SDL/include/SDL.h>
 ```
 ---
 ### Flux YAML custom tags
@@ -283,7 +286,7 @@ In project source, e.g. :
 - `!?linux`, `!?macos`, `!?windows` filter the values according to the **target platform** during generate/build time. *(others are planned)*
 - `!?debug`, `!?release` filter the values according to the **target configuration**
 - `!?x86`, `!?x64`, `!?arm32`, `!?arm64`, `!?wasm` filter the values according to the **target architecture**
-- `!?gcc`, `!?msvc`filter the values according to C/C++ toolchain
+- `!?gcc`, `!?msvc` filter the values according to C/C++ toolchain
 - `!$env` replace all environment variables found in value that are between `${...}`
 - `!join` allows to concatenate a file system path from the sequence (`os.path.sep.join(seq)`)
 
