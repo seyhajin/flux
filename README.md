@@ -151,6 +151,50 @@ Flux target file use custom YAML tags, see [Flux YAML custom tags](#Flux-YAML-cu
 |`rules`|||Can contains `cc`, `cxx`, `ar`, `as` rules to generate ninja build file|
 |`cc`, `cxx`, `ar`, `as`|||Use `!concat` or aliases to specifies parameters|
 
+Simple *windows.yml* target sample:
+```yaml
+target: windows
+toolchain: gcc
+
+# commands
+commands:
+  cc: gcc
+  cxx: g++
+  as: as
+  ar: ar
+  ld: g++
+
+# options
+options:
+  cc: !opts
+    - -std=gnu99
+    - -D_WIN32_WINNT=0x0603 
+    - !?x64 -m64 -Wa,-mbig-obj
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  cxx: !opts
+    - -std=c++11
+    - -D_WIN32_WINNT=0x0603
+    - !?x64 -m64 -Wa,-mbig-obj
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  ld: !opts
+    - -s -static
+    - !?x64 -m64
+
+# rules
+rules:
+  # compile
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  as: ${target.cmds.as} ${target.opts.as} ${project.opts.as} -c ${project.source} -o ${project.source.obj}
+  # archive
+  ar: ${target.cmds.ar} q ${target.opts.ar} ${project.opts.ar} ${project.out.file} ${project.objs}
+  # link
+  ld: ${target.cmds.ld} ${target.opts.ld} ${project.opts.ld} -o ${project.out.file} ${project.objs} ${project.libs}
+```
 ## Projects
 
 Flux project contains all informations to build project described in yaml file named `flux.yml` (or `<dirname>.yml` or `<dirname>.flux`).
@@ -169,6 +213,26 @@ Flux project file use custom YAML tags, see [Flux YAML custom tags](#Flux-YAML-c
 |`options`|||Optional. Can contains `cc`, `cxx`, `ar`, `as` project options|
 |`cc`, `cxx`, `ar`, `as`|||Use `!concat` or aliases to specifies parameters|
 |`inputs`|||Most important, determines the project inputs. see [Project inputs](#project-inputs) for more informations|
+
+Simple *flux.yml* project sample:
+```yaml
+build: app
+type: console
+about: Hello world, a simple console application for flux project
+name: hello
+author: Christophe TES
+inputs:
+  # assets
+  # copy all files from '$proj_dir/assets' to '$out_dir/assets'
+  - assets/@/assets
+  
+  # module dependencies
+  - <flux-mods/hello.flux>
+
+  # sources
+  - main.c
+```
+
 
 ### Project inputs
 
@@ -308,8 +372,8 @@ commands:
 # options
 options:
   cc: !opts                         # mandatory if you want to use build filters below
-    - -std=gnu99                    # global options
-    - -D_WIN32_WINNT=0x0603         # global options, can be in single line
+    - -std=gnu99                    # common options
+    - -D_WIN32_WINNT=0x0603         # common options, can be in single line
     - !?x64 -m64 -Wa,-mbig-obj      # only for 'x64' target arch
     - !?debug -O2                   # only for 'debug' target config
     - !?release -O3 -DNDEBUG=1      # only for 'release' target config
