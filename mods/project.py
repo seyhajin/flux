@@ -332,12 +332,14 @@ class Project:
         )
         n.newline()
 
-        n.rule('as_compile',
-            util.replace_env(target.rules['as'], rules_remap),
-            #deps=target.toolchain if target.toolchain in ['gcc', 'msvc'] else 'gcc',
-            description='Assembling $in'
-        )
-        n.newline()
+        if 'rules' in self.data:
+            if 'as' in self.date['rules']:
+                n.rule('as_compile',
+                    util.replace_env(target.rules['as'], rules_remap),
+                    #deps=target.toolchain if target.toolchain in ['gcc', 'msvc'] else 'gcc',
+                    description='Assembling $in'
+                )
+                n.newline()
 
         if self.build in ['mod', 'module']:
             n.rule('archive',
