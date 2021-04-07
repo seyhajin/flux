@@ -36,7 +36,8 @@ EXT = {
         'lib': '.so',
     },
     'emscripten': {
-        'mod': '.bc',
+        'app': '.html',
+        'mod': '.a', #.bc if emscripten version 1.x
     },
 }
 
@@ -80,7 +81,7 @@ class BuildOpts:
 
         # init options
         self.build = ''
-        self.apptype = 'window'
+        self.apptype = ''
         self.args = ''
         self.outdir = ''
         self.profile = '' # profile + tag
@@ -184,13 +185,21 @@ class BuildOpts:
             if self.apptype == '':
                 self.apptype = APP_TYPE[0]
         elif self.target in target.TARGET and self.target not in target.TARGET_DESKTOP:
-            log.todo("need to ajust other target options (%s)"%self.target, __file__)
+            if self.target == 'emscripten':
+                if not self.apptype:
+                    self.apptype = 'wasm'
+                    self.arch = 'wasm'
+            else:
+                log.todo("need to ajust other target options (%s)"%self.target, __file__)
         else:
             log.fatal('unrecognized target `%s` or not yet implemented' % self.target)
 
         if self.apptype in APP_TYPE:
             if self.target not in target.TARGET_DESKTOP:
                 log.fatal('`apptype` `%s` is only valid for desktop targets' % self.apptype)
+        elif self.apptype == 'wasm':
+            if self.target not in target.TARGET_WEB:
+                log.fatal('`apptype` `%s` is only valid for emscripten target' % self.apptype)
         else:
             log.fatal('unrecognized apptype `%s`' % self.apptype)
 

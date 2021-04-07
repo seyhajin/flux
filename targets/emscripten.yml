@@ -1,0 +1,36 @@
+target: emscripten
+toolchain: gcc
+
+# commands
+commands:
+  cc: emcc
+  cxx: em++
+  ar: emar
+  ld: em++
+
+# options
+options:
+  cc: !opts
+    - -std=gnu99 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s WASM=1
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  cxx: !opts
+    - -std=c++11 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s WASM=1
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+  ld: !opts
+    - -s FETCH=1 -s TOTAL_MEMORY=268435456 -s DISABLE_EXCEPTION_CATCHING=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0  -s WASM=1
+    - !?debug -O2
+    - !?release -O3 -DNDEBUG=1
+
+# rules
+rules:
+  # compile
+  cc: ${target.cmds.cc} ${target.opts.cc} ${project.opts.cc} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  cxx: ${target.cmds.cxx} ${target.opts.cxx} ${project.opts.cxx} -MMD -MF ${project.source.dep} -c ${project.source} -o ${project.source.obj}
+  # archive
+  ar: ${target.cmds.ar} rcs ${target.opts.ar} ${project.opts.ar} ${project.out.file} ${project.objs}
+  # link
+  ld: ${target.cmds.ld} ${target.opts.ld} ${project.opts.ld} -o ${project.out.file} ${project.objs} ${project.libs}

@@ -166,7 +166,11 @@ def load_flux_yaml(file, opts):
     def if_windows(loader, node):
         value = loader.construct_scalar(node)
         return value if (opts.target == 'windows' or opts.target == 'windows-msvc') else ''
-    
+
+    def if_emscripten(loader, node):
+        value = loader.construct_scalar(node)
+        return value if opts.target == 'emscripten' else ''
+
     # configs
     def if_debug(loader, node):
         value = loader.construct_scalar(node)
@@ -227,6 +231,7 @@ def load_flux_yaml(file, opts):
     yaml.add_constructor('!?linux', if_linux)
     yaml.add_constructor('!?macos', if_macos)
     yaml.add_constructor('!?windows', if_windows)
+    yaml.add_constructor('!?emscripten', if_emscripten)
 
     #TODO: Add 'ios', 'android', 'darwin' for macos|ios|tvos, 'mobile', 'desktop', 'web', 'tv', 'console'
 
