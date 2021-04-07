@@ -644,7 +644,7 @@ class Project:
             dst = assets_dir
             if src.find('@/'):
                 src, _, dst = src.partition('@/')
-                if not dst.endswith('/'):
+                if not dst.endswith('/') and dst != '':
                     dst+='/'
             if os.path.isfile(src):
                 dst+=util.strip_dir(src)
@@ -659,7 +659,10 @@ class Project:
             rmtree(assets_dir)
 
         # create dest assets dir
-        os.makedirs(assets_dir)
+        for src, dst in asset_files.items():
+            if dst.startswith(self.out_dir):
+                os.makedirs(assets_dir)
+                break
 
         # copy asset files
         self.copy_asset_files(asset_files)
@@ -710,6 +713,8 @@ class Project:
     #------------------------------------------------------------------------------
     def enum_asset_files(self, src, dst, files):
         if os.path.isfile(src):
+            src = os.path.join(self.base_dir, src)
+            dst = os.path.join(self.out_dir, dst)
             if dst not in files:
                 files[dst] = src
         elif os.path.isdir(src):
