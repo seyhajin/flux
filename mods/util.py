@@ -171,6 +171,27 @@ def load_flux_yaml(file, opts):
         value = loader.construct_scalar(node)
         return value if opts.target == 'emscripten' else ''
 
+    # target aliases
+    def if_desktop(loader, node):
+        value = loader.construct_scalar(node)
+        return value if (opts.target == 'windows' or \
+                         opts.target == 'windows-msvc' or \
+                         opts.target == 'linux' or \
+                         opts.target == 'macos' or \
+                         opts.target == 'raspbian') \
+                         else ''
+
+    def if_web(loader, node):
+        value = loader.construct_scalar(node)
+        return value if opts.target == 'emscripten' else ''
+
+    def if_mobile(loader, node):
+        value = loader.construct_scalar(node)
+        return value if (opts.target == 'android' or \
+                         opts.target == 'ios' or \
+                         opts.target == 'ios-sim') \
+                         else ''
+    
     # configs
     def if_debug(loader, node):
         value = loader.construct_scalar(node)
@@ -232,6 +253,10 @@ def load_flux_yaml(file, opts):
     yaml.add_constructor('!?macos', if_macos)
     yaml.add_constructor('!?windows', if_windows)
     yaml.add_constructor('!?emscripten', if_emscripten)
+
+    yaml.add_constructor('!?desktop', if_desktop)
+    yaml.add_constructor('!?web', if_web)
+    yaml.add_constructor('!?mobile', if_mobile)
 
     #TODO: Add 'ios', 'android', 'darwin' for macos|ios|tvos, 'mobile', 'desktop', 'web', 'tv', 'console'
 
