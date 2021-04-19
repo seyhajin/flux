@@ -47,7 +47,7 @@ ninja_required_version = '1.10.2'
 class Project:
 
     #------------------------------------------------------------------------------
-    def __init__(self, flux_dir, proj_dir, build_opts):
+    def __init__(self, flux_dir, proj_dir, build_opts, is_dep=False):
         '''load project file and prepare intermediate dirs'''
         
         # project yaml datas
@@ -125,20 +125,20 @@ class Project:
         self.toolchain = build_opts.toolchain
 
         # set project directory structure
-        if build_opts.outdir:
+        if build_opts.outdir and not is_dep:
+            self.proj_dir  = proj_dir
             self.base_dir  = util.fix_path(build_opts.outdir)
             self.build_dir = util.fix_path(os.path.join(self.base_dir, self.name))
             self.out_dir   = util.fix_path(os.path.join(self.build_dir, build_opts.profile))
             self.cache_dir = util.fix_path(os.path.join(self.out_dir, CACHE_DIR))
-            self.asset_dir = util.fix_path(os.path.join(self.out_dir, ASSET_DIR)
-        )
+            self.asset_dir = util.fix_path(os.path.join(self.out_dir, ASSET_DIR))
         else:
+            self.proj_dir  = proj_dir
             self.base_dir  = util.fix_path(proj_dir)
             self.build_dir = util.fix_path(os.path.join(self.base_dir, FDIR))
             self.out_dir   = util.fix_path(os.path.join(self.build_dir, build_opts.profile))
             self.cache_dir = util.fix_path(os.path.join(self.out_dir, CACHE_DIR))
-            self.asset_dir = util.fix_path(os.path.join(self.out_dir, ASSET_DIR)
-        )
+            self.asset_dir = util.fix_path(os.path.join(self.out_dir, ASSET_DIR))
 
         # get output extension
         self.out_ext = build.EXT[build_opts.target][build_opts.build]
@@ -264,7 +264,7 @@ class Project:
         n.newline()
         n.comment('project settings')
         n.variable('proj_name', self.name)
-        n.variable('proj_dir', self.base_dir)
+        n.variable('proj_dir', self.proj_dir)
         n.newline()
         n.comment('ninja settings')
         n.variable('builddir', self.cache_dir)
@@ -365,12 +365,12 @@ class Project:
         done = {}
         for src in self.src_files:
             ext = util.split_ext(src)
-            obj = util.fix_path(os.path.join(self.cache_dir, os.path.relpath(src, self.base_dir)))
+            obj = util.fix_path(os.path.join(self.cache_dir, os.path.relpath(src, self.proj_dir)))
             dep = obj+'.d'
             obj += '.obj' if self.toolchain == 'msvc' else '.o'
 
             # relative paths
-            src = util.fix_path(src.replace(self.base_dir, '$proj_dir'))
+            src = util.fix_path(src.replace(self.proj_dir, '$proj_dir'))
             obj = util.fix_path(obj.replace(self.cache_dir, '$builddir'))
             dep = util.fix_path(dep.replace(self.cache_dir, '$builddir'))
 
@@ -713,7 +713,7 @@ class Project:
     #------------------------------------------------------------------------------
     def enum_asset_files(self, src, dst, files):
         if os.path.isfile(src):
-            src = os.path.join(self.base_dir, src)
+            src = os.path.join(self.proj_dir, src)
             dst = os.path.join(self.out_dir, dst)
             if dst not in files:
                 files[dst] = src

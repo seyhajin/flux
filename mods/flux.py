@@ -139,7 +139,7 @@ def run(flux_dir, proj_dir, args):
                         for lib in proj.flux_libs:
                             # load dep project file
                             dep_dir = os.path.join(util.get_workspace_dir(flux_dir), lib)
-                            dep = Project(flux_dir, dep_dir, opts)
+                            dep = Project(flux_dir, dep_dir, opts, True)
 
                             # module or library dep only
                             if dep.build in ['mod', 'lib']:
