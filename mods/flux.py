@@ -19,7 +19,7 @@ except ImportError:
 
 
 # set consts
-VERSION = '0.0.1'
+VERSION = '0.0.2'
 
 ninja_required_version = '1.10.2'
 
