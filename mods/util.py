@@ -1,6 +1,7 @@
 '''various utility functions'''
 
-import os.path
+import os
+import stat
 import sys
 import platform
 import multiprocessing
@@ -39,6 +40,13 @@ def get_targets_dir(flux_dir):
 
 def get_verbs_dir(flux_dir):
     return os.path.join(flux_dir, 'verbs')
+
+def get_sdks_dir(flux_dir):
+    return os.path.join(get_workspace_dir(flux_dir), 'flux-sdks')
+
+def make_sdks_dirs(flux_dir):
+    if not os.path.isdir(get_sdks_dir(flux_dir)):
+        os.makedirs(get_sdks_dir(flux_dir))
 
 #------------------------------------------------------------------------------ filesystem
 
@@ -92,6 +100,11 @@ def strip_dir(path):
 def strip_ext(path):
     '''Strips the extension component from a filesystem path.'''
     return os.path.split(fix_path(path))[0]
+
+def remove_readonly(func, path, _):
+    '''this is an error callback function for shutil.rmtree to make read-only files writable after rmtree failed to delete them'''
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
 
 #------------------------------------------------------------------------------ misc
 
