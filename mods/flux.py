@@ -90,6 +90,10 @@ def run(flux_dir, proj_dir, args):
                     os.environ['LIB'] = os.environ['FLUX_MSVC_LIB']
                 else:
                     log.fatal('MSVC installation not found!')
+            elif target.target == 'emscripten':
+                from mods.sdks import emsdk
+                if emsdk.sdk_dir_exists(flux_dir):
+                    os.environ['PATH'] += os.pathsep + emsdk.get_emscripten_dir(flux_dir)
 
             if opts.verbose >= 3:
                 log.info('python %s.%s.%s' % (sys.version_info[:3]))
