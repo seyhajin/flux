@@ -142,8 +142,13 @@ class Project:
 
         # get output extension
         self.out_ext = build.EXT[build_opts.target][build_opts.build]
-        if self.target == 'macos' and self.build == 'app' and self.apptype != 'window':
+        if (self.target, self.build, self.apptype) == ('macos', 'app', 'console'):
             self.out_ext = '' # macos console app
+
+        #if (self.target, self.build) == ('emscripten', 'mod'): # fix emscripten 2.0.17
+        #    self.out_file = util.fix_path(os.path.join(self.out_dir, 'lib' + self.name + self.out_ext))
+        #else:
+        #    self.out_file = util.fix_path(os.path.join(self.out_dir, self.name + self.out_ext))
         self.out_file = util.fix_path(os.path.join(self.out_dir, self.name + self.out_ext))
 
         # set gen file
@@ -167,7 +172,7 @@ class Project:
             self.cc_opts.append('-I"%s"' % self.cache_dir)
             self.cxx_opts.append('-I"%s"' % self.cache_dir)
             # add project apptype
-            if self.target == 'windows':
+            if self.target == 'windows': #TODO: externalize this
                 if self.toolchain == 'msvc':
                     if self.apptype == 'window':
                         self.ld_opts.append('-subsystem:windows')
